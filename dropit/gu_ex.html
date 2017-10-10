@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<style>* {
+    padding: 0;
+    margin: 0;
+}</style>
+<head>
+    <meta charset="utf-8">
+    <title>Hello World</title>
+</head>
+<script src="assets/js/pixi.min.js"></script>
+<body>
+<script type="text/javascript">
+
+    //todo https://file000.flaticon.com/downloads/license/license.pdf license
+
+    //Create the renderer
+    var stage = new PIXI.Container(),
+        renderer = PIXI.autoDetectRenderer(window.innerWidth-25,window.innerHeight-25);
+
+
+
+    //Add the canvas to the HTML document
+    document.body.appendChild(renderer.view);
+
+
+    PIXI.loader
+        .add("assets/image/test/cat.png")
+        .add("assets/image/test/checkerboard.png")
+        .load(setup);
+
+    //This `setup` function will run when the image has loaded
+    function setup() {
+
+        //Create the `cat` sprite from the texture
+        var cat = new PIXI.Sprite(
+            PIXI.loader.resources["assets/image/test/cat.png"].texture
+        );
+
+        var board = new PIXI.Sprite(
+            PIXI.loader.resources["assets/image/test/checkerboard.png"].texture
+        );
+
+        cat.x = 100;
+        cat.y = 100;
+
+        board.x = window.innerWidth/3;
+        board.width = window.innerWidth/2;
+        board.height = window.innerWidth/2;
+
+        //Add the cat to the stage
+        stage.addChild(cat);
+        stage.addChild(board);
+
+        //Render the stage
+        renderer.render(stage);
+
+        //gameLoop();
+
+
+        function gameLoop() {
+
+            //Loop this function at 60 frames per second
+            requestAnimationFrame(gameLoop);
+
+            //Move the cat 1 pixel to the right each frame
+            //cat.x += 1;
+
+            //Render the stage to see the animation
+            renderer.render(stage);
+        }
+    }
+
+
+
+
+</script>
+</body>
+</html>

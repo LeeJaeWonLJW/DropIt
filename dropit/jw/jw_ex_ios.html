@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+<style>* {padding: 0; margin: 0;}</style>
+<head>
+    <meta charset="utf-8">
+    <title>Hello World</title>
+</head>
+<script src="../assets/js/pixi.min.js"></script>
+<body onkeydown="on_key_down()">
+</body>
+<script type="text/javascript">
+    var Container = PIXI.Container,
+        autoDetectRenderer = PIXI.autoDetectRenderer,
+        loader = PIXI.loader,
+        resources = PIXI.loader.resources,
+        Sprite = PIXI.Sprite;
+
+    //'stage'가 이름 붙힌 컨테이너 생성
+    var stage = new Container(),
+        renderer = autoDetectRenderer(window.innerWidth,window.innerHeight);
+    renderer.backgroundColor = 0xece6cc;
+    document.body.appendChild(renderer.view);
+
+    //'stage'에서 'renderer'를 'render'로 부르도록 설정
+    renderer.render(stage);
+
+    var basicText = new PIXI.Text('GX,GY');
+    basicText.x = 30;
+    basicText.y = 90;
+
+    stage.addChild(basicText);
+
+    makebox();
+    makehealthbar();
+
+    PIXI.loader
+        .add("../assets/image/test/cat.png")
+        .load(setup);
+
+    var cat;
+
+    function setup() {
+        cat = new Sprite(resources["../assets/image/test/cat.png"].texture);
+        cat.x = window.innerWidth/2-17;
+        stage.addChild(cat);
+
+        //renderer.render(stage);
+        gameLoop();
+    }
+
+    function gameLoop() {
+        requestAnimationFrame(gameLoop);
+
+        cat.y += 1;
+        renderer.render(stage);
+    }
+
+    function makebox() {
+        var graphics = new PIXI.Graphics();
+        graphics.beginFill(0x00ff00, 0.25);
+        graphics.drawRect(0, window.innerHeight-200, window.innerWidth/2, window.innerHeight, 15);
+        graphics.endFill();
+        graphics.beginFill(0xff0000, 0.25);
+        graphics.drawRect(window.innerWidth-(window.innerWidth/2), window.innerHeight-200, window.innerWidth/2, window.innerHeight, 15);
+        graphics.endFill();
+
+        stage.addChild(graphics);
+    }
+
+    function makehealthbar() {
+        healthBar = new PIXI.DisplayObjectContainer();
+        healthBar.position.set(stage.width/2-128,6);
+        stage.addChild(healthBar);
+
+        //Create the black background rectangle
+        var innerBar = new PIXI.Graphics();
+        innerBar.beginFill(0x000000,1);
+        innerBar.drawRoundedRect(20, 0, 256, 20,13);
+        innerBar.endFill();
+        healthBar.addChild(innerBar);
+
+        //Create the front red rectangle
+        var outerBar = new PIXI.Graphics();
+        outerBar.beginFill(0xFF3300,1);
+        outerBar.drawRoundedRect(20, 0, 128, 20,13);
+        outerBar.endFill();
+        healthBar.addChild(outerBar);
+
+        healthBar.outer = outerBar;
+    }
+
+    function on_key_down() {
+        var keycode = event.keyCode;
+        if (keycode == 8
+            || keycode == 116
+        ) event.returnValue = false;
+
+        switch(keycode) {
+            //a
+            case 65:
+                cat.x -= 30;
+                break;
+            //s
+            case 83:
+                cat.y += 10;
+                break;
+            //d
+            case 68:
+                cat.x += 30;
+                break;
+            default:
+                break;
+        }
+    }
+
+    window.ondevicemotion = function (gyroEvent) {
+        GX = gyroEvent.accelerationIncludingGravity.x;
+        GY = gyroEvent.accelerationIncludingGravity.y;
+
+        if(GX>1)
+            cat.x += GX;
+        else if(GX<-1)
+            cat.x += GX;
+
+        basicText.text = GX + "," + GY;
+        stage.addChild(basicText);
+        renderer.render(stage);
+    }
+    
+</script>
+</html>

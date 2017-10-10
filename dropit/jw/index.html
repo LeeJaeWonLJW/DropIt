@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>jw_set</title>
+</head>
+<script src="../assets/js/pixi.min.js"></script>
+<body>
+<h1>핸드폰을 왼쪽으로 기울이세요.</h1>
+<h1>고양이가 왼쪽으로 갑니까?</h1>
+<button id="yesBtn" onclick="yesBtn_click();">네</button>
+<button id="noBtn" onclick="noBtn_click();">아니요</button>
+</body>
+<script type="text/javascript">
+    function yesBtn_click() {
+        location.replace("jw_ex_ios.html");
+    }
+
+    function noBtn_click() {
+        location.replace("jw_ex_android.html");
+    }
+
+    var Container = PIXI.Container,
+        autoDetectRenderer = PIXI.autoDetectRenderer,
+        loader = PIXI.loader,
+        resources = PIXI.loader.resources,
+        Sprite = PIXI.Sprite;
+
+    //'stage'가 이름 붙힌 컨테이너 생성
+    var stage = new Container(),
+        renderer = autoDetectRenderer(window.innerWidth,300);
+    renderer.backgroundColor = 0xFFFFFF;
+    document.body.appendChild(renderer.view);
+
+    //'stage'에서 'renderer'를 'render'로 부르도록 설정
+    renderer.render(stage);
+
+    PIXI.loader
+        .add("../assets/image/test/cat.png")
+        .load(setup);
+
+    var cat;
+
+    function setup() {
+        cat = new Sprite(resources["../assets/image/test/cat.png"].texture);
+        cat.x = window.innerWidth/2-17;
+        stage.addChild(cat);
+
+        gameLoop();
+    }
+
+    function gameLoop() {
+        requestAnimationFrame(gameLoop);
+        renderer.render(stage);
+    }
+
+    window.ondevicemotion = function (gyroEvent) {
+        GX = gyroEvent.accelerationIncludingGravity.x;
+        GY = gyroEvent.accelerationIncludingGravity.y;
+
+        if(GX>1)
+            cat.x += GX;
+        else if(GX<-1)
+            cat.x += GX;
+
+        basicText.text = GX + "," + GY;
+        stage.addChild(basicText);
+        renderer.render(stage);
+    }
+</script>
+</html>
